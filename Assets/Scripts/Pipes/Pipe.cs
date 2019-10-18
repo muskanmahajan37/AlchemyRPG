@@ -18,18 +18,22 @@ public abstract class AbstractPipe<T> : Pipe<T> {
 
     protected IExpire<Pipe<T>> myExpire;
     protected IFlagable myFlagable;
-
-
+    protected INocabNameable myNocabName; 
 
     public AbstractPipe(IExpire<Pipe<T>> e, IFlagable f) {
         this.myExpire = e;
         this.myFlagable = f;
+
+        // TODO, consider providing this object with a better NocabName
+        // than the default uuid from a NocabNamable. 
+        this.myNocabName = new NocabNameable(this);
+        
     }
 
     #region INocabNameable functions
-    public string getNocabName() { throw new NotImplementedException(); asfasdfasdf  }
+    public string getNocabName() { return this.myNocabName.getNocabName(); }
 
-    public bool deregister() { throw new NotImplementedException(); }
+    public bool deregister() { return this.myNocabName.deregister(); }
     #endregion
 
     #region Expire functions

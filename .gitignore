@@ -40,7 +40,6 @@ sysinfo.txt
 # Crashlytics generated file
 Assets/StreamingAssets/crashlytics-build.properties
 
-
 # Visual Studio Code
 .vscode/*
 #!.vscode/settings.json
@@ -48,6 +47,8 @@ Assets/StreamingAssets/crashlytics-build.properties
 #!.vscode/launch.json
 #!.vscode/extensions.json
 
-
 # Operating System Generated
 *.DS_Store
+
+# Other/ Misc.
+_config.yml
