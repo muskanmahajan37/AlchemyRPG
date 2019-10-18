@@ -57,11 +57,19 @@ public abstract class AbstractCallBackExpire<T> : IExpire<T> {
 
     public AbstractCallBackExpire() {
         this.refrencedActions = new List<KeyValuePair<string, Action<T>>>(4); // I don't anticipate more than 4 callbacks
+
+        // NOTE: toBeLookedUp List obj is only instantiated at 'load' time. 
+        //       i.e., this object must first be saved to disk, then loaded before
+        //       the toBeLookedUp list comes into play
     }
 
     public AbstractCallBackExpire(string NocabName, Action<T> callback) {
         this.refrencedActions = new List<KeyValuePair<string, Action<T>>>(4);
         this.addCallback(NocabName, callback);
+
+        // NOTE: toBeLookedUp List obj is only instantiated at 'load' time. 
+        //       i.e., this object must first be saved to disk, then loaded before
+        //       the toBeLookedUp list comes into play
     }
 
     /*
@@ -145,15 +153,16 @@ public abstract class AbstractCallBackExpire<T> : IExpire<T> {
         if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
         if (jo["Type"] != _myType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
 
-        JsonArray NocabNameLists = jo["InstanceNocabNames"];
+        JsonArray NocabNameList = jo["InstanceNocabNames"];
         JsonArray MethodNameList = jo["MethodNames"];
-        this.toBeLookedUp = new List<KeyValuePair<string, string>>(NocabNameLists.Count);
+        this.toBeLookedUp = new List<KeyValuePair<string, string>>(NocabNameList.Count);
 
-        for (int i = 0; i < NocabNameLists.Count; i++) {
-            string NocabName = NocabNameLists[i];
+        for (int i = 0; i < NocabNameList.Count; i++) {
+            string NocabName = NocabNameList[i];
             string methodName = MethodNameList[i];
             this.toBeLookedUp.Add(new KeyValuePair<string, string>(NocabName, methodName));
         }
+        // TODO: assert NocabNameLists.count == MethodNameList.count
     }
 }
 
@@ -180,6 +189,7 @@ public class ExpireCountCycle<T> : AbstractCallBackExpire<T> {
     #region Json saving/ loading
 
     public const string _MySaveType = "ExpireCountCycle";
+    sgsdfg;
 
     #endregion
 }

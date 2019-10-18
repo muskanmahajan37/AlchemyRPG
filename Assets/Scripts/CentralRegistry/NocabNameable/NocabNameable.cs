@@ -26,11 +26,6 @@ public class NocabNameable : INocabNameable{
 
     private readonly string NocabName;
 
-
-    asdfjasldkfm;
-    // TOOD: There's a circular dependency here. Namely, objects that 'have' a nocabNamable object
-    //       use it to at construction time. The NocabNamable needs to be constructed and the
-    //       owning object should be responsible for registering it? 
     public NocabNameable(object objectToRegister) {
         this.NocabName = System.Guid.NewGuid().ToString();
         this.register(objectToRegister);
