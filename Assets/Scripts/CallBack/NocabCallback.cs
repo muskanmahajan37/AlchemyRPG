@@ -28,7 +28,7 @@ public class NocabCallback : ICallback {
     }
 
     #region Json save/ Load
-    public void fromJson(JsonObject jo) {
+    public void loadJson(JsonObject jo) {
         throw new System.NotImplementedException();
     }
 

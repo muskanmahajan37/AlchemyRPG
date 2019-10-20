@@ -125,9 +125,7 @@ public abstract class AbstractCallBackExpire<T> : IExpire<T> {
 
 
     private string _myType = "AbstractExpireable"; // Version 1
-    public string myType() {
-        return _myType;
-    }
+    public string myType() { return _myType; }
 
     public JsonObject toJson() {
         JsonObject result = new JsonObject();
@@ -149,7 +147,7 @@ public abstract class AbstractCallBackExpire<T> : IExpire<T> {
         return result;
     }
 
-    public void fromJson(JsonObject jo) {
+    public void loadJson(JsonObject jo) {
         if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
         if (jo["Type"] != _myType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
 
@@ -189,7 +187,33 @@ public class ExpireCountCycle<T> : AbstractCallBackExpire<T> {
     #region Json saving/ loading
 
     public const string _MySaveType = "ExpireCountCycle";
-    sgsdfg;
+    public new string myType() { return _MySaveType; }
+
+    public new JsonObject toJson() {
+        JsonObject result = new JsonObject();
+
+        // Pack the base class
+        JsonObject baseCallBack = base.toJson();
+        result["Base"] = baseCallBack;
+
+        // Pack this class
+        result["CycleCount"] = this._cycleCount;
+        result["Type"] = _MySaveType;
+
+        return result;
+    }
+
+    public new void loadJson(JsonObject jo) {
+        if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
+        if (jo["Type"] != _MySaveType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
+
+        // Unpack the base class 
+        JsonObject baseCallBack = jo["Base"];
+        base.loadJson(baseCallBack);
+
+        // Unpack this class 
+        this._cycleCount = jo["CycleCount"];
+    }
 
     #endregion
 }
@@ -207,5 +231,37 @@ public class ExpireNever<T> : AbstractCallBackExpire<T>
     public override bool cycle() { return false; }
 
     public override int strength() { return 1; }
-    
+
+
+    #region Json saving/ loading
+
+    public const string _MySaveType = "ExpireNever";
+    public new string myType() { return _MySaveType; }
+
+    public new JsonObject toJson() {
+        JsonObject result = new JsonObject();
+
+        // Pack the base class
+        JsonObject baseCallBack = base.toJson();
+        result["Base"] = baseCallBack;
+
+        // Pack this class
+        result["Type"] = _MySaveType;
+
+        return result;
+    }
+
+    public new void fromJson(JsonObject jo) {
+        if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
+        if (jo["Type"] != _MySaveType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
+
+        // Unpack the base class 
+        JsonObject baseCallBack = jo["Base"];
+        base.loadJson(baseCallBack);
+
+        // This class has no data to unpack
+    }
+
+    #endregion
+
 }

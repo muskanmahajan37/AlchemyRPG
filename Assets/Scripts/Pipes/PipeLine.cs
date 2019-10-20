@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using LightJson;
 using UnityEngine;
 
 
-public interface IPipeLine<T> {
+public interface IPipeLine<T>: JsonConvertable {
 
     void addPipe(Pipe<T> p);
 
@@ -29,10 +30,14 @@ public class PipeLine<T> : IPipeLine<T> {
      *    I suppose the above is a todo for usefull IPipeLine< T > classes.
      */
 
+    
     private Dictionary<string, HashSet<Pipe<T>>> pipes;
+
+    private INocabNameable MyNocabName;
 
     public PipeLine() {
         this.pipes = new Dictionary<string, HashSet<Pipe<T>>>();
+        this.MyNocabName = new NocabNameable(this);
     }
 
     private HashSet<Pipe<T>> getPipeSet(string flagKey) {
@@ -63,7 +68,8 @@ public class PipeLine<T> : IPipeLine<T> {
             this.pipes[flagKey] = new HashSet<Pipe<T>>();
         }
 
-        p.addCallback(cleanUpCallback); // Tell the pipe how to clean itself up once it's expired
+        // Tell the pipe to "call" this.cleanUpCallback(...)  once it's ready to be cleaned up
+        p.addCallback(MyNocabName.getNocabName(), cleanUpCallback); 
         this.pipes[flagKey].Add(p);
     }
 
@@ -178,5 +184,32 @@ public class PipeLine<T> : IPipeLine<T> {
         }
         return startingValue;
     }
-}
 
+
+    #region Json Conversion
+    public const string _MyJsonType = "PipeLine"; // Version 1
+    public string myType() {
+        return _MyJsonType;
+    }
+
+    public JsonObject toJson() {
+        JsonObject result = new JsonObject();
+        result["NocabName"] = this.MyNocabName.getNocabName();
+
+
+        result["Type"] = _MyJsonType;
+        return result;
+    }
+
+    public void loadJson(JsonObject jo) {
+        if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
+        if (jo["Type"] != _MyJsonType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
+
+        PipeFactory<T> pipeFactory = new PipeFactory<T>();
+        Pipe<T> newPipe = pipeFactory.fromJson(jo);
+
+        this.MyNocabName = new NocabNameable(jo["NocabName"], this);
+    }
+
+    #endregion
+}

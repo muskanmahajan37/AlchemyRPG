@@ -6,13 +6,24 @@ using System;
 
 
 public interface JsonConvertable {
+    /**
+     * A JsonConvertable object is an object that can convert itself into a JsonObject,
+     * and ingest a well-formatted JsonObject and update itself to match.
+     * 
+     * In other words, the JsonConvertable interface allows objects to save and load themselves.
+     * 
+     * In general, the output of toJson() should capture 100% of the state stored in the object.
+     * The format of the outputed JsonObject from toJson(), should be valid input for the loadJson(...)
+     * function. That is to say, this.loadJson(this.toJson()) should produce no errors and result
+     * in no state changes (a no-op).
+     */
     // TODO: Seperate out the load and save functionality?
 
     string myType();  // TODO: Do I really need this? 
 
     JsonObject toJson();
 
-    void fromJson(JsonObject jo);
+    void loadJson(JsonObject jo);
 }
 
 public class InvalidLoadType : Exception {

@@ -71,7 +71,7 @@ public class Flagable : IFlagable {
         return _MySavingType;
     }
 
-    public void fromJson(JsonObject jo) {
+    public void loadJson(JsonObject jo) {
         if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
         if (jo["Type"] != _MySavingType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
 

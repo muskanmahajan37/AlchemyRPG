@@ -21,7 +21,6 @@ public interface INocabNameable {
 
 }
 
-
 public class NocabNameable : INocabNameable{
 
     private readonly string NocabName;

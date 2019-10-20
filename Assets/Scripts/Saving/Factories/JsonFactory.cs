@@ -13,11 +13,16 @@ public static class JsonFactory {
      * the problem is that each type needs a dedicated save/ load function
      */
 
+    // TODO: Consider making a factory of factories
+    // That way, complex generic type T objects can be de-seralized 
+    // relativly dynamically. Bonus points for making a pooling system of Factories
+
 
 
     #region Dictionary
     public const string _DictionaryStringString = "Dict<String,String>"; // Version 1
     public const string _DictionaryStringListString = "Dict<String,List<String>>"; // Version 1
+    public const string _DictionaryStringHashSetPipeT = "_DictionaryStringHashSetPipeT"; // Version 1
 
     #region Dictionary<string, string>
     public static JsonObject toJson(Dictionary<string, string> dictionary) {

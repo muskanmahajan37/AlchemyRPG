@@ -5,6 +5,12 @@ using LightJson;
 using UnityEngine;
 
 
+// TODO: Pipes should NOT be INocabNamable objects. I can't see any reason for an other
+// object to need a refrence to a Pipe instance. If anything, Pipes themselves need a 
+// refrence to other things (like mobs or the weather or something), so the other thing
+// should have/be a INocabNameable so the pipe can find it later.
+// The only reason why Pipe is INocabNamable is because I wanted to practice
+// inplimenting the interface along with the JsonConvertable 
 public interface Pipe<T> : IExpire<Pipe<T>>, IFlagable, JsonConvertable, INocabNameable {
 
     T pump(T incomingValue);
@@ -28,6 +34,11 @@ public abstract class AbstractPipe<T> : Pipe<T> {
         // than the default uuid from a NocabNamable. 
         this.myNocabName = new NocabNameable(this);
         
+    }
+
+    public AbstractPipe(JsonObject jo) {
+        // Used for loading/ saving
+        this.loadJson(jo);
     }
 
     #region INocabNameable functions
@@ -69,16 +80,38 @@ public abstract class AbstractPipe<T> : Pipe<T> {
 
     #region JsonConvertable
 
-    public string myType() {
-        throw new NotImplementedException();
-    }
+    public const string _MyType = "AbstractPipe"; // V1
+
+    public string myType() { return _MyType; }
 
     public JsonObject toJson() {
-        throw new NotImplementedException();
+        JsonObject result = new JsonObject();
+
+        // Pack this class
+        result["NocabName"] = myNocabName.getNocabName();
+        result["Flags"] = myFlagable.toJson();
+        result["Expire"] = myExpire.toJson();
+
+        result["Type"] = _MyType;
+        return result;
     }
 
-    public void fromJson(JsonObject jo) {
-        throw new NotImplementedException();
+    public void loadJson(JsonObject jo) {
+        if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
+        if (jo["Type"] != _MyType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
+
+        // TODO: this is an abstract class. Should the CentralRegistry of NocabNamables 
+        // have a refrence to this abstraction? I guess, what happens if you try to cast
+        // an abstract class as the (hopefully) correct base class? I guess everything should
+        // still work out ok... Maybe?
+        this.myNocabName = new NocabNameable(jo["NocabName"], this);
+
+        this.myFlagable = new Flagable();
+        this.myFlagable.loadJson(jo["Flags"]); // Load the JsonObject into myFlagable
+
+        ExpireableFactory<Pipe<T>> expireFactory = new ExpireableFactory<Pipe<T>>();
+        this.myExpire = expireFactory.fromJson(jo["Expire"]);
+        
     }
 
 
@@ -92,8 +125,6 @@ public class PipeSum : AbstractPipe<int> {
 
     private int delta;
 
-
-
     public PipeSum(IExpire<Pipe<int>> e, IFlagable f, int delta, string flag = FlagConstants.NO_FLAG) : base(e, f) {
 
         // NOTE: Generaly a Pipe should always have flags. However
@@ -103,6 +134,7 @@ public class PipeSum : AbstractPipe<int> {
         //    2) Use an IFlagable object that already has flags
         //       Failure to do either may cause problems of lost pipes/ memory leaks
         //
+        //       The flags are used by Pipeline objects to sort and manage them. 
         //       If you really don't want to use the flag parameter, pass in the FlagConstans.NO_FLAG const
         if (flag != FlagConstants.NO_FLAG) { this.addFlag(flag); } 
         this.delta = delta;
@@ -113,6 +145,19 @@ public class PipeSum : AbstractPipe<int> {
         this.delta = delta;
     }
 
+    public PipeSum(JsonObject jo) : base(jo["Base"]) {
+        /**
+         * Please use PipeFactory<T>().fromJson(JsonObject jo) instead of this constructor!
+         *
+         * NOTE: Using this constructor is frowned upon because it does NOT validate 
+         * the incoming jo object. The JO could be malformed => Errors.
+         */ 
+
+        // NOTE, the base class takes care of loding itself using the JsonObject constructor
+        // therefore we only need to load the data specific to this object.
+        this.loadJsonThis(jo);
+    }
+
 
     public override int pump(int incomingValue) {
         return incomingValue + delta;
@@ -120,38 +165,41 @@ public class PipeSum : AbstractPipe<int> {
 
     #region Json Saving/ Loading
     public const string _MyJsonType = "PipeSum"; // Version 1
+    public new string myType() { return _MyJsonType; }
 
     public JsonObject toJson(PipeSum pipe) {
         JsonObject result = new JsonObject();
+
+        // Pack the base class
+        result["Base"] = base.toJson();
+
+        // Pack this class data
+        result["Delta"] = this.delta;
         result["Type"] = _MyJsonType;
-        result["delta"] = this.delta;
-        result["Flagable"] = this.myFlagable.toJson();
+
         return result;
     }
 
-    /*
-    public PipeSum fromJson(JsonObject jo) {
-        // WARNING: This function updates itself even if it has some other
-        // delta value/ use already.
-        // The best way to load a JsonPipeSum is to make a new empty PipeSum
-        // object and load the JsonObject into it...
+    public new void loadJson(JsonObject jo) {
+        if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
+        if (jo["Type"] != _MyType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
 
-        if(!jo.ContainsKey("Type")) {
-            // TODO make a better Error type for this.
-            throw new InvalidLoadType("When loading a PipeSum, the provided JasonObject did not have a type field.");
-        }
-        if (jo["Type"] != _MyJsonType) {
-            throw new InvalidLoadType("Can't load PipeSum, expected vs recieved type: " + _MyJsonType + " != " + jo["Type"].ToString());
-        }
+        // Unpack the base class
+        loadJsonBase(jo["Base"]);
 
-        PipeSum result = new PipeSum();
-        return result;
+        // Unpack this class data
+        loadJsonThis(jo);
     }
-    */
 
-    public string myType() {
-        return _MyJsonType;
+    private void loadJsonBase(JsonObject baseJO) { base.loadJson(baseJO); }
+    private void loadJsonThis(JsonObject jo) {
+        // TODO: the base class creates a NocabNamable obj, and therefor the refrence points to that.
+        // Should the ref point to base or this? 
+        // Can I override myNocabNamable? 
+        this.delta = jo["Delta"];
     }
+
+
     #endregion
 
 }
@@ -177,10 +225,53 @@ public class PipeAction : AbstractPipe<PMAction> {
         this.addFlags(flags);
     }
 
+    public PipeAction(JsonObject jo): base(jo["Base"]) {
+        /**
+         * Please use PipeFactory<T>().fromJson(JsonObject jo) instead of this constructor!
+         *
+         * NOTE: Using this constructor is frowned upon because it does NOT validate 
+         * the incoming jo object. The JO could be malformed => Errors.
+         */
+        loadJsonThis(jo);
+    }
+
     public override PMAction pump(PMAction incomingAction) {
         // TODO: what would a pipe do to an action? 
         //       Perhapse this can only take in specific implimentations of actions? 
         return incomingAction;
     }
+
+    #region Json Saving/ Loading
+    public const string _MyJsonType = "PipeAction"; // Version 1
+    public new string myType() { return _MyJsonType; }
+
+    public JsonObject toJson(PipeSum pipe) {
+        JsonObject result = new JsonObject();
+
+        // Pack the base class
+        result["Base"] = base.toJson();
+
+        // Pack this class data
+        result["Type"] = _MyJsonType;
+
+        return result;
+    }
+
+    public new void loadJson(JsonObject jo) {
+        if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
+        if (jo["Type"] != _MyType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
+
+        // Unpack the base class
+        loadJsonBase(jo["Base"]);
+
+        // Unpack this class data
+        loadJsonThis(jo);
+    }
+
+    private void loadJsonBase(JsonObject baseJO) { base.loadJson(baseJO); }
+    private void loadJsonThis(JsonObject jo) { }
+
+
+    #endregion
 
 }
