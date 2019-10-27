@@ -115,7 +115,9 @@ public static class testEquipableFactory {
 
         HashSet<IEquipable> behaviors = new HashSet<IEquipable>();
 
-        Pipe<int> attackup = new PipeSum(new ExpireNever<Pipe<int>>(), new Flagable(), 2, BattleStats.ATTACK);
+        Flagable f = new Flagable();
+        f.addFlag(BattleStats.ATTACK);
+        Pipe<int> attackup = new PipeSum(new ExpireNever<Pipe<int>>(), f, 2);
         IEquipable addAttachBehavior = new EquipablePipe(EquipSlots.MAIN_HAND, attackup);
 
         PMAction slashAction = new ActionAttack(3);

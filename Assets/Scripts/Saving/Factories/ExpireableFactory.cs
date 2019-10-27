@@ -15,14 +15,14 @@ public class ExpireableFactory<T> {
 
             case "ExpireCountCycle": { // Version 1
                     ExpireCountCycle<T> result = new ExpireCountCycle<T>(-1);
-                    result.fromJson(jo);
+                    result.loadJson(jo);
                     return result;
                 }
 
 
             case "ExpireNever": { // Version 1
                     ExpireNever<T> result = new ExpireNever<T>();
-                    result.fromJson(jo);
+                    result.loadJson(jo);
                     return result;
                 }
 

@@ -53,7 +53,8 @@ public class EquipmentTesting : MonoBehaviour {
         PMMob m1 = new PMMob(m1Stats);
         PMMob m2 = new PMMob(m2Stats);
 
-        Pipe<int> speedUp = new PipeSum(new ExpireNever<Pipe<int>>(), new Flagable(), 5, BattleStats.SPEED);
+        Pipe<int> speedUp = new PipeSum(new ExpireNever<Pipe<int>>(), new Flagable(), 5);
+        speedUp.addFlag(BattleStats.SPEED);
         IEquipable helmOfSpeed = new EquipablePipe(EquipSlots.HELM, speedUp);
 
         m1.equip(helmOfSpeed);
@@ -84,7 +85,8 @@ public class EquipmentTesting : MonoBehaviour {
         PMMob m1 = new PMMob(m1Stats);
         PMMob m2 = new PMMob(m2Stats);
 
-        Pipe<int> speedUp = new PipeSum(new ExpireNever<Pipe<int>>(), new Flagable(), 5, BattleStats.SPEED);
+        Pipe<int> speedUp = new PipeSum(new ExpireNever<Pipe<int>>(), new Flagable(), 5);
+        speedUp.addFlag(BattleStats.SPEED);
         IEquipable helmOfSpeed = new EquipablePipe(EquipSlots.HELM, speedUp);
         PMAction swordSlash = new ActionAttack(5);
         IEquipable attackSword = new ActionEquipable(EquipSlots.MAIN_HAND, swordSlash);

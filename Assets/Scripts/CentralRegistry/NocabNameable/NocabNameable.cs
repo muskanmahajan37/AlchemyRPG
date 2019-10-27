@@ -43,6 +43,7 @@ public class NocabNameable : INocabNameable{
 
 
 // TODO: Do I ever even need this? 
+/*
 public class LazyNocabNamable : INocabNameable {
     /**
      * A LazyNocabNamable object is a INocabNamable that dose NOT register itself
@@ -50,7 +51,7 @@ public class LazyNocabNamable : INocabNameable {
      * 
      * Any down stream object that has-a LazyNocabNamable must call the register(obj)
      * fuction at the down stream object's construction/ start time. 
-     */
+     *
 
 
     private string NocabName;
@@ -93,3 +94,4 @@ public class LazyNocabNamable : INocabNameable {
         return CentralRegistry.deregister(this.NocabName);
     }
 }
+*/

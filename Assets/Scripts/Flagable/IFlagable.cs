@@ -75,14 +75,14 @@ public class Flagable : IFlagable {
         if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
         if (jo["Type"] != _MySavingType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
 
-        HashSet<string> importedFlags = JsonFactory.fromJsonHashSet(jo["Flags"]);
+        HashSet<string> importedFlags = JsonFactory.fromJsonHashSet(jo["FSet"]);
         this.flags = importedFlags;
     }
 
 
     public JsonObject toJson() {
         JsonObject result = new JsonObject();
-        result["Flags"] = JsonFactory.toJson(this.flags);
+        result["FSet"] = JsonFactory.toJson(this.flags);
         return result;
     }
     #endregion

@@ -7,6 +7,21 @@ using LightJson;
 public class PipeFactory<T> {
 
     public Pipe<T> fromJson(JsonObject jo) {
+        /**
+         * To use this fromJson() function, you need to know a little bit about the JsonObject you
+         * are trying to convert. Namely, you need to know the output type of the newly loaded pipe
+         * type. 
+         * 
+         * The generic type of this PipFactory represents the generic type of the pipe that is being 
+         * loaded. Certain types of Pipe Objects have a required output generic type. For instance,
+         * the PipeSum pipe is a Pipe<int>, and no other generic type will work. 
+         * 
+         * Use:
+         * 1) Create a PipeFactory<T> of the correct T (where T is the output type of the pipe to be loaded)
+         * 2) Pass the json object into fromJson() funciton.
+         * 3) The returned pipe will be a new object with the correct generic type casted as a Pipe<T>
+         * 4) End user can (if they need to) cast the pipe into the more specific base class if needed
+         */
         switch (jo["Type"].AsString) {
 
             case "AbstractPipe": // Version 1

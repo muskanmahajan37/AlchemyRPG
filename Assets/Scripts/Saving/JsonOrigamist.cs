@@ -21,8 +21,6 @@ public class JsonOrigamist  {
     private string fileName;
     private JsonArray toBeFolded;
 
-    private const string ROOT = "root";
-
     public JsonOrigamist(string relativeDirectory, string fileName) {
         this.relativeDirectory = relativeDirectory;
         this.fileName = fileName;
@@ -30,7 +28,7 @@ public class JsonOrigamist  {
     }
 
 
-
+    #region Write to Disk
     public void add(JsonObject jo) {
         toBeFolded.Add(jo);
     }
@@ -40,8 +38,10 @@ public class JsonOrigamist  {
         Debug.Log("WriteToDisk: " + jsonStr);
         NocabDiskUtility.WriteStringToFile(this.relativeDirectory, this.fileName, jsonStr);
     }
+    #endregion
 
 
+    #region Read from Disk
     public static JsonArray readFromDiskStatic(string relativeDirectory, string fileName) {
         string jsonStr = NocabDiskUtility.ReadStringFromFile(relativeDirectory, fileName);
         Debug.Log("ReadFromDisk: " + jsonStr);
@@ -51,27 +51,6 @@ public class JsonOrigamist  {
     public JsonArray readFromDisk() {
         return readFromDiskStatic(this.relativeDirectory, this.fileName);
     }
-    
-
-
-
-    /**a
-     * 
-     * Ok, so I have a type string, then what? 
-     * Making a super factory is a problem because each
-     * thing has a unique return type :( 
-     * 
-     * So.... What's the best strategy to convert from JsonObject
-     * to real object? 
-     * 
-     * 
-     * TODO: 
-     * make a recursive string->JsonObject folder, 
-     * or at least some interface/ somethign that allows me to load
-     * an actual Object from file
-     * 
-     * Should the reader vs writer be different objects? 
-     * 
-     */
+    #endregion
 
 }

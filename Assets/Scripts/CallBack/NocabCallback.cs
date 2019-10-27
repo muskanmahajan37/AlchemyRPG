@@ -4,6 +4,8 @@ using LightJson;
 using UnityEngine;
 using System;
 
+
+/*
 public interface ICallback : JsonConvertable  {
 
     bool execute();
@@ -42,7 +44,6 @@ public class NocabCallback : ICallback {
     #endregion
 
 }
-
 
 public class tempReciever {
 
@@ -90,3 +91,4 @@ public class testMonobehavior : MonoBehaviour {
     }
 
 }
+*/

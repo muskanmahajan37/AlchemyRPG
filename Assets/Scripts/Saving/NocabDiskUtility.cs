@@ -15,7 +15,7 @@ public static class NocabDiskUtility {
             if (relativeDirectory[0] == '\\' ||
                 relativeDirectory[0] == '/') {
                 // Strip the leading special character
-                Debug.Log("Warning: Provided relativePathName contains a leading problem character. Please remove the first character to increase efficency. Problem string: " + relativeDirectory);
+                Debug.LogError("Warning: Provided relativePathName contains a leading problem character. Please remove the first character to increase efficency. Problem string: " + relativeDirectory);
                 relativeDirectory.Remove(0, 1); // Start at element 0, remove 1 character
             }
         }
@@ -26,6 +26,7 @@ public static class NocabDiskUtility {
         string fullDirectory = cleanFileName(relativeDirectory);
         Directory.CreateDirectory(fullDirectory); // No op if it already exists
         string fileLocation = Path.Combine(fullDirectory, fileName);
+        Debug.Log("Writing file to: " + fileLocation);
         File.WriteAllText(fileLocation, textToWrite);
     }
 
