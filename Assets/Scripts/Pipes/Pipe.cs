@@ -11,7 +11,7 @@ using UnityEngine;
 // should have/be a INocabNameable so the pipe can find it later.
 // The only reason why Pipe is INocabNamable is because I wanted to practice
 // inplimenting the interface along with the JsonConvertable 
-public interface Pipe<T> : IExpire<Pipe<T>>, IFlagable, JsonConvertable, INocabNameable {
+public interface Pipe<T> : IExpire<Pipe<T>>, IFlagable, JsonConvertible , INocabNameable {
 
     T pump(T incomingValue);
 

@@ -69,6 +69,9 @@ public class PipelineTestingMB : MonoBehaviour {
         jsonOrigamist.add(jo);
         jsonOrigamist.writeToDisk();
 
+        // 4.1 Simulate power down
+        CentralRegistry.deregister(p.getNocabName());
+
         // 5 read from disk
         JsonArray ja = jsonOrigamist.readFromDisk();
         JsonObject joFromDisk = ja[0];

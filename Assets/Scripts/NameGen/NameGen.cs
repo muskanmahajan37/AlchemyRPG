@@ -6,24 +6,20 @@ using UnityEngine;
 public class NameGen : MonoBehaviour
 {
 
-    public void Start()
-    {
+    public void Start() {
         // string newName = simpleScrambleAlg("ender".ToCharArray());
-        for (int i = 0; i < 300; i++)
-        {
+        for (int i = 0; i < 300; i++) {
             string newName = SylableNameGen.genSylableName();
-            //Debug.Log(newName);
-            lc.addEvent(newName);
+            lc.addEvent(new LogEntry("Name Generator: ", newName));
 
         }
     }
 
     public LogController lc;
 
-    public void genNameTest()
-    {
+    public void genNameTest() {
         string newName = simpleScrambleAlg("testabcde".ToCharArray());
-        lc.addEvent(newName);
+        lc.addEvent(new LogEntry("Name Generator: ", newName));
     }
     
     private static string simpleScrambleAlg(char[] oldName) {

@@ -31,14 +31,12 @@ public class PipeFactory<T> {
             case "PipeSum": { // Version 1
                     if (typeof(T) != typeof(int)) { Debug.Log(writeError("int")); }
                     PipeSum result = new PipeSum(jo);
-                    result.loadJson(jo);
                     return (Pipe<T>)result;
                 }
 
             case "PipeAction": { // Version 1
                     if (typeof(T) != typeof(PMAction)) { Debug.Log(writeError("PMAction")); }
                     PipeAction result = new PipeAction(jo);
-                    result.loadJson(jo);
                     return (Pipe<T>)result;
                 }
 

@@ -4,7 +4,7 @@ using LightJson;
 using UnityEngine;
 
 
-public interface IPipeLine<T>: JsonConvertable {
+public interface IPipeLine<T>: JsonConvertible  {
 
     void addPipe(Pipe<T> p);
 

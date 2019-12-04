@@ -93,9 +93,9 @@ public abstract class AbstractCallBackExpire<T> : IExpire<T>
 
 
     private string _myType = "AbstractExpireable"; // Version 1
-    public string myType() { return _myType; }
+    public virtual string myType() { return _myType; }
 
-    public JsonObject toJson()
+    public virtual JsonObject toJson()
     {
         JsonObject result = new JsonObject();
         JsonArray NocabNameLists = new JsonArray();
@@ -119,7 +119,7 @@ public abstract class AbstractCallBackExpire<T> : IExpire<T>
         return result;
     }
 
-    public void loadJson(JsonObject jo)
+    public virtual void loadJson(JsonObject jo)
     {
         if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
         if (jo["Type"] != _myType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }

@@ -9,7 +9,7 @@ public static class FlagConstants {
     public const string MODIFY = "_modify_";
 }
 
-public interface IFlagable : JsonConvertable {
+public interface IFlagable : JsonConvertible  {
 
     ICollection<string> getFlags();
 
@@ -83,6 +83,7 @@ public class Flagable : IFlagable {
     public JsonObject toJson() {
         JsonObject result = new JsonObject();
         result["FSet"] = JsonFactory.toJson(this.flags);
+        result["Type"] = "Flagable";
         return result;
     }
     #endregion

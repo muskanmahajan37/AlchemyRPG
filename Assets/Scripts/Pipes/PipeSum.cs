@@ -26,10 +26,10 @@ public class PipeSum : AbstractPipe<int>
     public PipeSum(JsonObject jo) : base(jo["Base"])
     {
         /**
-         * Please use PipeFactory<T>().fromJson(JsonObject jo) instead of this constructor!
+         * Please consider useing PipeFactory<T>().fromJson(JsonObject jo) instead of this constructor.
          *
-         * NOTE: Using this constructor is frowned upon because it does NOT validate 
-         * the incoming jo object. The JO could be malformed => Errors.
+         * The PipeFactory is centralized and therefor can help with JO validation, but currently (Nov 2019)
+         * the PipeFactory does NOT have any validation...
          */
 
         // NOTE, the base class takes care of loding itself using the JsonObject constructor
@@ -54,7 +54,7 @@ public class PipeSum : AbstractPipe<int>
         // Pack this class data
         result["Type"] = _MyJsonType;
         result["Delta"] = this.delta;
-        
+
         // Pack the base class
         result["Base"] = base.toJson();
 

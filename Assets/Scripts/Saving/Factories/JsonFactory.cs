@@ -22,7 +22,7 @@ public static class JsonFactory {
     #region Dictionary
     public const string _DictionaryStringString = "Dict<String,String>"; // Version 1
     public const string _DictionaryStringListString = "Dict<String,List<String>>"; // Version 1
-    public const string _DictionaryStringHashSetPipeT = "_DictionaryStringHashSetPipeT"; // Version 1
+    //public const string _DictionaryStringHashSetPipeT = "_DictionaryStringHashSetPipeT"; // Version 1
 
     #region Dictionary<string, string>
     public static JsonObject toJson(Dictionary<string, string> dictionary) {
@@ -40,7 +40,7 @@ public static class JsonFactory {
 
     public static Dictionary<string, string> fromJsonDictionary(JsonObject jo) {
         if (jo["Type"] != _DictionaryStringString) {
-            throw new Exception("Trying to unfold a json object inot a dictionary but the JO is of type: " + jo["Type"]);
+            throw new Exception("Trying to unfold a json object into a dictionary but the JO is of type: " + jo["Type"]);
         }
         Dictionary<string, string> result = new Dictionary<string, string>();
         JsonObject data = jo["Data"];
@@ -52,6 +52,32 @@ public static class JsonFactory {
 
     #endregion
 
+
+    #region Dictionary<string, int>
+    public const string _DictionaryStringInt = "Dict<String,Int>"; // Version 1
+    public static JsonObject toJson(Dictionary<string, int> dictionary) {
+        JsonObject result = new JsonObject();
+        result["Type"] = _DictionaryStringInt;
+
+        // a nested JsonObject b/c what if the provided dict has a key == "Type"?
+        JsonObject data = new JsonObject();
+        foreach(KeyValuePair<string, int> kvp in dictionary) {
+            data[kvp.Key] = kvp.Value;
+        }
+        result["Data"] = data;
+        return result;
+    }
+
+    public static Dictionary<string, int> fromJsonDictionaryStringInt(JsonObject jo) {
+        if (jo["Type"] != _DictionaryStringInt) {
+            throw new Exception("Trying to unfold a json object into a dictionary but the JO is of type: " + jo["Type"]);
+        }
+        Dictionary<string, int> result = new Dictionary<string, int>();
+        JsonObject data = jo["Data"];
+        foreach(KeyValuePair<string, JsonValue> kvp in data) { result.Add(kvp.Key, kvp.Value); }
+        return result;
+    }
+    #endregion
 
     #region Dictionary<string, List<string>>
 

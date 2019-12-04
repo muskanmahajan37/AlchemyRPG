@@ -5,7 +5,7 @@ using System.Reflection;
 using LightJson;
 using System;
 
-public interface IExpire<T> : JsonConvertable
+public interface IExpire<T> : JsonConvertible 
 {
     /**
      * NOTE: Old text might now be true: "Whoever calls strength() is responsable for IExpire clean up."

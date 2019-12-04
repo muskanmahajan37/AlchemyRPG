@@ -22,9 +22,9 @@ public class ExpireNever<T> : AbstractCallBackExpire<T>
     #region Json saving/ loading
 
     public const string _MySaveType = "ExpireNever";
-    public new string myType() { return _MySaveType; }
+    public override string myType() { return _MySaveType; }
 
-    public new JsonObject toJson()
+    public override JsonObject toJson()
     {
         JsonObject result = new JsonObject();
 
@@ -38,7 +38,7 @@ public class ExpireNever<T> : AbstractCallBackExpire<T>
         return result;
     }
 
-    public new void loadJson(JsonObject jo)
+    public override void loadJson(JsonObject jo)
     {
         if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
         if (jo["Type"] != _MySaveType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }

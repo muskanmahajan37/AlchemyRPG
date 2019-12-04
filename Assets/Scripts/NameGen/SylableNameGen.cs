@@ -48,7 +48,8 @@ public class SylableNameGen : MonoBehaviour
     // TODO: Move this to a utility file
     public static T randomWeighted<T>(Dictionary<T, float> weights)
     {
-        if(GameController.DevMode) {
+        // Test code please remove eventually
+        if(false) { 
             float totalSum = 0.0f;
             float percision = 0.001f;
             foreach(KeyValuePair<T, float> e in weights) {

@@ -33,7 +33,7 @@ public class ExpireableFactory<T> {
                     break;
                 }
         }
-        string errMsg = "Error, invalid Json[\"Type\"] when attempting to re-create/ load an IExpireable.";
+        string errMsg = "Error, invalid Json[\"Type\"] when attempting to re-create/ load an IExpireable. Type:\"" + jo["Type"] + "\"" ;
         throw new InvalidLoadType(errMsg);
     }
 

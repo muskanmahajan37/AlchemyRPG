@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using LightJson;
 using System;
+using UnityEngine;
 
 public abstract class AbstractPipe<T> : Pipe<T>
 {
@@ -24,7 +25,9 @@ public abstract class AbstractPipe<T> : Pipe<T>
     public AbstractPipe(JsonObject jo)
     {
         // Used for loading/ saving
-        this.loadJson(jo);
+        // NOTE: don't use this.loadJson() because it's virtual and the implimenting
+        //       class SHOULD be overriding it with the "override" keyword
+        this.abstractLoadJson(jo);
     }
 
     #region INocabNameable functions
@@ -84,8 +87,7 @@ public abstract class AbstractPipe<T> : Pipe<T>
         return result;
     }
 
-    public virtual void loadJson(JsonObject jo)
-    {
+    protected void abstractLoadJson(JsonObject jo) {
         if (!jo.ContainsKey("Type")) { throw new InvalidLoadType("Missing Type field, this is not valid json object"); }
         if (jo["Type"] != _MyType) { throw new InvalidLoadType("JsonObject has invalid type: " + jo["Type"]); }
 
@@ -101,6 +103,25 @@ public abstract class AbstractPipe<T> : Pipe<T>
         ExpireableFactory<Pipe<T>> expireFactory = new ExpireableFactory<Pipe<T>>();
         this.myExpire = expireFactory.fromJson(jo["Expire"]);
 
+    }
+
+    public virtual void loadJson(JsonObject jo)
+    {
+        // Well, because this kina acts as a constructor for an abstract class it should never really be called.
+        // However, because it's virtual the base class should use the override keyword when defining its own loadJson()
+        // function and thus cut this loadJson() function out of the call time hierarchy 
+        Debug.LogError("Warning: an AbstractPipe.loadJson() fuction was called. This should never happen because it should be overriden by an implimenting child class.");
+        abstractLoadJson(jo);
+
+        /*
+         * Order of events
+         * 1) Implimenting class is constructed with a JO
+         * 2) Implimenting class runs this constructor with a JO
+         * 2.1) this constructor runs the abstractLoadJson() function
+         * 3) Implimenting class runs it's own loadJson() function
+         */
+         // TODO considering the above order of events, does AbstractPipe class need to have a loadJson() function?
+         //      Should AbstractPipe have an empty loadJson() function?
     }
 
 
