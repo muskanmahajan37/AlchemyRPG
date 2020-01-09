@@ -4,11 +4,9 @@ using UnityEngine;
 
 
 
-public class TestConversation
-{
+public class TestConversation {
 
-    public void test()
-    {
+    public void test() {
         ConvoNode n1 = new ConvoNode("1");
         ConvoNode n2 = new ConvoNode("2");
         ConvoNode n3 = new ConvoNode("3");
@@ -19,8 +17,7 @@ public class TestConversation
 }
 
 
-public class Conversation
-{
+public class Conversation {
     /*
      * A conversation is a map with edges and nodes.
      * 

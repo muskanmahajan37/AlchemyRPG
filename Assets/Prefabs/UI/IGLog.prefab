@@ -355,7 +355,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialLines: 6
-  fontSize: 32
   prefabTMP_Obj: {fileID: 4268596244399455750, guid: 629b6d143d9b1b04da9c932310bdfe68,
     type: 3}
   content: {fileID: 1517664891321650746}
@@ -363,6 +362,7 @@ MonoBehaviour:
     type: 3}
   BackgroundB: {fileID: 2110392527622891865, guid: 15abfca5483165244816667d77abbd98,
     type: 3}
+  Font_Size: 1
 --- !u!1 &1517664891035271952
 GameObject:
   m_ObjectHideFlags: 0

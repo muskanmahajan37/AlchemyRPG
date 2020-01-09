@@ -16,7 +16,6 @@ public class LogController : MonoBehaviour {
     // Public VARS
     public int initialLines = 6;
     public const int MAX_LINES_DISPLAYED = 64;
-    public int fontSize = 32;
     public TextMeshProUGUI prefabTMP_Obj;
 
     // Private Vars
@@ -34,6 +33,20 @@ public class LogController : MonoBehaviour {
     public Image BackgroundA;
     public Image BackgroundB;
     private bool backgroundSwitch = true;
+
+    // Font sizes
+    public EFontSize Font_Size = EFontSize.Medium;
+    private int actualFontSize { get {
+            switch (this.Font_Size) {
+                case EFontSize.Small: return FONT_SIZE_S;
+                case EFontSize.Medium: return FONT_SIZE_M;
+                case EFontSize.Large: return FONT_SIZE_L;
+                default: return FONT_SIZE_M;
+            }
+        } }
+    public const int FONT_SIZE_S= 24;
+    public const int FONT_SIZE_M = 32;
+    public const int FONT_SIZE_L = 42;
 
     private void Start() {
         this.contentTransform = (RectTransform)content.transform;
@@ -85,7 +98,7 @@ public class LogController : MonoBehaviour {
 
         // Now create the text Obj as a child of the BG
         TextMeshProUGUI newTextObject = GameObject.Instantiate<TextMeshProUGUI>(prefabTMP_Obj, backgroundObj.transform);
-        newTextObject.fontSize = this.fontSize;
+        newTextObject.fontSize = this.actualFontSize;
         newTextObject.font = entry.font;
         // Format the text to be displaied (including the colors)
         newTextObject.text = buildTextString(entry);
@@ -95,7 +108,7 @@ public class LogController : MonoBehaviour {
         // bottom of this file (NOTE A)
         float leftTextPadding = 5;
         float rightTextPadding = 10;
-        newTextObject.rectTransform.sizeDelta = new Vector2(this.contentWidth - (leftTextPadding + rightTextPadding), this.fontSize);
+        newTextObject.rectTransform.sizeDelta = new Vector2(this.contentWidth - (leftTextPadding + rightTextPadding), this.actualFontSize);
         newTextObject.rectTransform.Translate(new Vector2(leftTextPadding + rightTextPadding, 0));
 
         // Update the size of the Background object box
@@ -103,7 +116,7 @@ public class LogController : MonoBehaviour {
 
         return backgroundObj.gameObject;
     }
-
+    
     private string buildTextString(LogEntry entry) {
         // Build the Header
         sb.Append("<color=#");
@@ -121,8 +134,6 @@ public class LogController : MonoBehaviour {
         return result;
     }  
 }
-
-
 
 
 /** NOTE A
@@ -148,3 +159,9 @@ public class LogController : MonoBehaviour {
  * After setting the newTextObject's sizeDelta, use the preferredHeight attribute instead of 
  * the actual height. 
  */
+
+public enum EFontSize {
+    Small,
+    Medium,
+    Large,
+}
