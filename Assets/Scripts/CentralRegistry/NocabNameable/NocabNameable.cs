@@ -15,8 +15,16 @@ public interface INocabNameable {
      */
 
 
+    /**
+     * Add theis NocabNamable entity into the central registry.
+     */
     string getNocabName();
 
+    /**
+     * Remove the refrence to this NocabNamable from the central Registry.
+     * Should only be called when the Nocabnamable entity/ obj "dies" or 
+     * needs to be destoryed.
+     */
     bool deregister();
 
 }

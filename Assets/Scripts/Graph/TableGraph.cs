@@ -45,21 +45,18 @@ public class TableGraph<NPayload, EPayload> {
 
     #region Adders
     public Node<NPayload> addNode(Node<NPayload> newNode) {
-        // This function will clober any old Nodes if a non-unique name is used
         this.assertNONExistance(newNode.nodeName);
         this.allNodes.Add(newNode.nodeName, newNode);
         return newNode;
     }
 
-    public Node<NPayload> addNode(NPayload payload) {
-        // This function will clober any old Nodes if a non-unique name is used
-        return addNode(payload, Guid.NewGuid().ToString());
-    }
-
     public Node<NPayload> addNode(NPayload payload, string nodeName) {
-        // This function will clober any old Nodes if a non-unique name is used
         Node<NPayload> newNode = new Node<NPayload>(payload, nodeName);
         return this.addNode(newNode);
+    }
+
+    public Node<NPayload> addNode(NPayload payload) {
+        return addNode(payload, Guid.NewGuid().ToString());
     }
 
     public Edge<NPayload, EPayload> createEdgeOneWay(Node<NPayload> sourceNode, Node<NPayload> destNode, EPayload edgePayload) {
@@ -67,8 +64,8 @@ public class TableGraph<NPayload, EPayload> {
          * If the provided nodes don't exist in this graph, they will be added.
          * An edge will be created between the two.
          */
-        if (!this.containsNode(sourceNode.nodeName)) { this.addNode(sourceNode); }
-        if (!this.containsNode(destNode.nodeName)) { this.addNode(destNode); }
+        if ( ! this.containsNode(sourceNode.nodeName)) { this.addNode(sourceNode); }
+        if ( ! this.containsNode(destNode.nodeName))   { this.addNode(destNode); }
         // Else, the given nodes are already contained in this graph
 
         Edge<NPayload, EPayload> newEdge = new Edge<NPayload, EPayload>(sourceNode, destNode, edgePayload);
@@ -93,7 +90,7 @@ public class TableGraph<NPayload, EPayload> {
     public TableGraph<NPayload, EPayload> mergeGraphs(TableGraph<NPayload, EPayload> otherGraph) {
         /**
          * Merge the given "otherGraph" into this graph
-         * NOTE: The returned graph IS this graph. Either should be used, while the otherGraph
+         * NOTE: The returned graph IS this graph. Either should be used, while the "otherGraph"
          * should be discarded. 
          */
         // Add all the KeyValuePairs from otherGraph into this graph
@@ -109,12 +106,14 @@ public class TableGraph<NPayload, EPayload> {
 
     #region Removers
     public bool removeNode(string nodeName) {
+        // Removes the given node name. Return true => node removed sucessfully
         if ( ! this.containsNode(nodeName)) { return false; }
 
-        this.allNodes.Remove(nodeName);
-        this.inboundEdges.Remove(nodeName);
-        this.outboundEdges.Remove(nodeName);
-        return true;
+        bool result = true;
+        result = result && this.allNodes.Remove(nodeName);
+        result = result && this.inboundEdges.Remove(nodeName);
+        result = result && this.outboundEdges.Remove(nodeName);
+        return result;
     }
 
     // TODO: This function is slightly inefficent, try and improve it
@@ -125,6 +124,9 @@ public class TableGraph<NPayload, EPayload> {
          * If the nodes do NOT exist, then an error is thrown.
          * If the nodes do exist, but the edge dose not, then false if returned.
          * If the nodes and edge do exist, the edge will be removed and true returned. 
+         * 
+         * NOTE: This function is O(n) where n is proportional to the number of edges 
+         *       in the given NodeName (smallest n between the two)
          */
 
         assertExistance(sourceNodeName);
@@ -135,17 +137,16 @@ public class TableGraph<NPayload, EPayload> {
 
         bool outIsLarger = outEdge.Count > inEdge.Count;
 
-        int smallThreshold = 10; // TODO: This is a random number. 
-        if (outIsLarger && (outEdge.Count < smallThreshold)) {
+        if (outIsLarger) {
             // If the smaller set is less than the small threshold
             return findAndRemoveCommonEdge(outEdge, inEdge);
-        } else if (( ! outIsLarger) && (inEdge.Count < smallThreshold)) {
+        } else {
             // If the smaller set is less than the small thershold
             return findAndRemoveCommonEdge(inEdge, outEdge);
-        } else {
+        } /*else {
             // Else both sets are fairly large
             return findAndRemoveCommonEdgeConstTime(outEdge, inEdge, sourceNodeName, destNodeName);
-        }
+        }*/
 
     }
 
@@ -155,12 +156,15 @@ public class TableGraph<NPayload, EPayload> {
             if (largeSet.Contains(edge)) {
                 largeSet.Remove(edge);
                 smallSet.Remove(edge);
-                return true;
             }
         }
         return false;
     }
 
+
+    /*
+     * Function removed b/c the GetHashCode() for an edge was changed. The cheese employed no longer works :( 
+     * 
     private bool findAndRemoveCommonEdgeConstTime(HashSet<Edge<NPayload, EPayload>> setA, 
                                                   HashSet<Edge<NPayload, EPayload>> setB,
                                                   string sourceNodeName,
@@ -175,13 +179,19 @@ public class TableGraph<NPayload, EPayload> {
         result |= setB.Remove(tempEdge);
         return result;
     }
+    */
     #endregion
 
 
     #region Getters
+
+    // NOTE: making a getNeighbors function will be confusing (down stream vs up stream neighbors)
+    // and inefficent (because everythign is stored as edges, not direct connections).
+
     public bool containsNode(string nodeName) {
         return this.allNodes.ContainsKey(nodeName);
     }
+    public bool containsNode(Node<NPayload> n) { return this.containsNode(n.nodeName); }
 
     public Node<NPayload> getNode(string nodeName) {
         assertExistance(nodeName);
@@ -219,9 +229,6 @@ public class TableGraph<NPayload, EPayload> {
         }
     }
 
-    // NOTE: making a getNeighbors function will be confusing (down stream vs up stream neighbors)
-    // and inefficent (because everythign is stored as edges, not direct connections).
-
 }
 
 // TODO: Consider making this a poolable object
@@ -248,14 +255,14 @@ public class Node<NPayload> {
 
     public override int GetHashCode() {
         // Two Nodes are equal if they have the same nodeName uuid
-        return this.ToString().GetHashCode();
+        return this.nodeName.GetHashCode();
     }
 
     public override bool Equals(object obj) {
         // Two Nodes are equal if they have the same nodeName uuid 
         Node<NPayload> item = obj as Node<NPayload>;
         if (item == null) { return false; }
-        return this.ToString() == item.ToString();
+        return this.nodeName.Equals(item.nodeName);
     }
 
     public override string ToString() {
@@ -288,17 +295,18 @@ public class Edge<NPayload, EPayload> {
 
     public EPayload payload;
 
+    public readonly string uuid;
+
     public Edge(Node<NPayload> source, Node<NPayload> dest, EPayload payload) {
         this.payload = payload;
         this.source = source;
         this.destination = dest;
+
+        this.uuid = Guid.NewGuid().ToString();
     }
 
     public override int GetHashCode() {
-        int hash = 17;
-        hash = hash * 29 + source.GetHashCode();
-        hash = hash * 29 + destination.GetHashCode();
-        return hash;
+        return this.uuid.GetHashCode();
     }
 
     public override bool Equals(object obj) {
@@ -307,7 +315,6 @@ public class Edge<NPayload, EPayload> {
         // TODO: Consider having multiple edges between two nodes
         Edge<NPayload, EPayload> item = obj as Edge<NPayload, EPayload>;
         if (item == null) { return false; }
-        return this.source.Equals(item.source) && 
-               this.destination.Equals(item.destination);
+        return this.uuid.Equals(item.uuid);
     }
 }
