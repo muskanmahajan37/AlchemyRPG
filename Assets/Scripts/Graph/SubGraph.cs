@@ -31,7 +31,6 @@ public class SubGraph<NPayload, EPayload> : TableGraph<NPayload, EPayload>{
 
     #region merging subgraphs
 
-
     public SubGraph<NPayload, EPayload> outputToInputRandom(SubGraph<NPayload, EPayload> otherGraph, EPayload connectionPayload) {
         /**
          * Merge the given "otherGraph" into this graph
@@ -45,7 +44,7 @@ public class SubGraph<NPayload, EPayload> : TableGraph<NPayload, EPayload>{
         this.mergeGraphs(otherGraph);
 
         string outboundName = popRandomName(ref this.danglingOutboundNames);
-        string inboundName = popRandomName(ref otherGraph.danglingOutboundNames);
+        string inboundName = popRandomName(ref otherGraph.danglingInboundNames);
 
         this.createEdgeOneWay(outboundName, inboundName, connectionPayload);
 

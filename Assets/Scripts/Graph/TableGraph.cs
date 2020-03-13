@@ -210,6 +210,16 @@ public class TableGraph<NPayload, EPayload> {
         return this.inboundEdges.safeGet(nodeName);
     }
 
+    public Node<NPayload> entryPoint() {
+        /**
+         * Pull a "random" node from this.allNodes
+         * NOTE, if there are multiple dis-connected regions in this graph then a single entryPoint may not suffice.
+         * TODO: Solve the above problem.
+         */
+        if (this.allNodes.Count == 0) { throw new IndexOutOfRangeException("A graph that has no nodes has no entry point"); }
+        return this.allNodes.ElementAt(0).Value;
+    }
+
     #endregion
 
 
